@@ -25,6 +25,10 @@ RUN mkdir -p /etc/nginx/sites-enabled && \
     rm -f /etc/nginx/sites-enabled/* && \
     ln -s /etc/nginx/sites-available/fusionpbx /etc/nginx/sites-enabled/fusionpbx
 
+# Set permissions
+RUN chown -R www-data:www-data /var/www/fusionpbx && \
+    chmod -R 755 /var/www/fusionpbx
+
 # Expose ports
 EXPOSE 80 443
 
