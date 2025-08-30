@@ -1,0 +1,32 @@
+FROM ubuntu:24.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    wget git nginx postgresql postgresql-contrib php-fpm php-pgsql php-curl php-mbstring php-xml php-imap \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure PostgreSQL
+RUN service postgresql start && \
+    su - postgres -c "psql -c \"CREATE USER fusionpbx WITH PASSWORD 'fusionpbx';\"" && \
+    su - postgres -c "createdb -O fusionpbx fusionpbx" && \
+    service postgresql stop
+
+# Install FusionPBX
+WORKDIR /usr/src
+RUN git clone https://github.com/fusionpbx/fusionpbx-install.sh.git && \
+    cd /usr/src/fusionpbx-install.sh/ubuntu && \
+    chmod +x pre-install.sh install.sh && \
+    ./pre-install.sh && \
+    ./install.sh
+
+# Configure Nginx
+COPY fusionpbx.nginx /etc/nginx/sites-available/fusionpbx
+RUN mkdir -p /etc/nginx/sites-enabled && \
+    rm -f /etc/nginx/sites-enabled/* && \
+    ln -s /etc/nginx/sites-available/fusionpbx /etc/nginx/sites-enabled/fusionpbx
+
+# Expose ports
+EXPOSE 80 443
+
+# Start services with proper signal handling
+CMD ["/bin/bash", "-c", "service postgresql start && service php8.3-fpm start && nginx -g 'daemon off;'"]
