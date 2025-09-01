@@ -1,0 +1,6 @@
+--2025-08-31 22:17:11--  https://files.freeswitch.org/repo/deb/debian-release/freeswitch_archive_gpg.key
+Resolving files.freeswitch.org (files.freeswitch.org)... 190.102.98.174, 2803:d000:fffe::174
+Connecting to files.freeswitch.org (files.freeswitch.org)|190.102.98.174|:443... connected.
+HTTP request sent, awaiting response... 401 Unauthorized
+
+Username/Password Authentication Failed.
